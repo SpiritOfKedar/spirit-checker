@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Quintessential } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -30,6 +31,9 @@ export const metadata: Metadata = {
     "resume optimization",
     "applicant tracking system",
   ],
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +47,7 @@ export default function RootLayout({
         <ThemeProvider>
           <div className="min-h-screen flex flex-col">
             {children}
+            <Footer />
           </div>
         </ThemeProvider>
       </body>
