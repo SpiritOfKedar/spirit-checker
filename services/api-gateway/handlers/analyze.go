@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -71,8 +72,10 @@ func getServiceURL(service string) string {
 	}
 
 	if url := os.Getenv(envKey); url != "" {
+		log.Printf("[DEBUG] Service %s using URL from env %s: %s", service, envKey, url)
 		return url
 	}
+	log.Printf("[DEBUG] Service %s using default URL: %s", service, defaultURLs[service])
 	return defaultURLs[service]
 }
 
