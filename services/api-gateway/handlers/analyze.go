@@ -66,9 +66,9 @@ func getServiceURL(service string) string {
 	envKey = strings.ReplaceAll(envKey, "-", "_")
 
 	defaultURLs := map[string]string{
-		"resume-parser": "http://localhost:8081",
-		"nlp-service":   "http://localhost:8082",
-		"ats-scorer":    "http://localhost:8083",
+		"resume-parser": "https://ats-resume-parser-ykin.onrender.com",
+		"nlp-service":   "https://ats-nlp-service.onrender.com",
+		"ats-scorer":    "https://ats-ats-scorer.onrender.com",
 	}
 
 	if url := os.Getenv(envKey); url != "" {
