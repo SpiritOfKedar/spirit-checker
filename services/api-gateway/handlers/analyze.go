@@ -147,15 +147,29 @@ func callParseService(resumeBase64, fileName string) (*ParseResponse, error) {
 	jsonData, _ := json.Marshal(payload)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, err
+		log.Printf("[ERROR] Failed to connect to resume-parser: %v", err)
+		return nil, fmt.Errorf("failed to connect to resume parser service: %v", err)
 	}
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
 
+	// Check for non-2xx status codes
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		log.Printf("[ERROR] Resume parser returned status %d: %s", resp.StatusCode, string(body[:min(len(body), 500)]))
+		return nil, fmt.Errorf("resume parser service returned status %d", resp.StatusCode)
+	}
+
+	// Check if response is HTML (Render cold start or error page)
+	if len(body) > 0 && body[0] == '<' {
+		log.Printf("[ERROR] Resume parser returned HTML instead of JSON (service may be cold starting): %s", string(body[:min(len(body), 200)]))
+		return nil, fmt.Errorf("resume parser service is starting up, please try again in a few seconds")
+	}
+
 	var parseResp ParseResponse
 	if err := json.Unmarshal(body, &parseResp); err != nil {
-		return nil, err
+		log.Printf("[ERROR] Failed to parse resume-parser response: %v, body: %s", err, string(body[:min(len(body), 500)]))
+		return nil, fmt.Errorf("invalid response from resume parser: %v", err)
 	}
 
 	if parseResp.Error != "" {
@@ -176,15 +190,29 @@ func callNLPService(resumeText, jobDescription string) (*NLPAnalysisResponse, er
 	jsonData, _ := json.Marshal(payload)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, err
+		log.Printf("[ERROR] Failed to connect to nlp-service: %v", err)
+		return nil, fmt.Errorf("failed to connect to NLP service: %v", err)
 	}
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
 
+	// Check for non-2xx status codes
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		log.Printf("[ERROR] NLP service returned status %d: %s", resp.StatusCode, string(body[:min(len(body), 500)]))
+		return nil, fmt.Errorf("NLP service returned status %d", resp.StatusCode)
+	}
+
+	// Check if response is HTML (Render cold start or error page)
+	if len(body) > 0 && body[0] == '<' {
+		log.Printf("[ERROR] NLP service returned HTML instead of JSON (service may be cold starting): %s", string(body[:min(len(body), 200)]))
+		return nil, fmt.Errorf("NLP service is starting up, please try again in a few seconds")
+	}
+
 	var nlpResp NLPAnalysisResponse
 	if err := json.Unmarshal(body, &nlpResp); err != nil {
-		return nil, err
+		log.Printf("[ERROR] Failed to parse nlp-service response: %v, body: %s", err, string(body[:min(len(body), 500)]))
+		return nil, fmt.Errorf("invalid response from NLP service: %v", err)
 	}
 
 	if nlpResp.Error != "" {
@@ -208,15 +236,29 @@ func callScoringService(nlpResp *NLPAnalysisResponse) (*ScoringResponse, error) 
 	jsonData, _ := json.Marshal(payload)
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, err
+		log.Printf("[ERROR] Failed to connect to ats-scorer: %v", err)
+		return nil, fmt.Errorf("failed to connect to scoring service: %v", err)
 	}
 	defer resp.Body.Close()
 
 	body, _ := io.ReadAll(resp.Body)
 
+	// Check for non-2xx status codes
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		log.Printf("[ERROR] Scoring service returned status %d: %s", resp.StatusCode, string(body[:min(len(body), 500)]))
+		return nil, fmt.Errorf("scoring service returned status %d", resp.StatusCode)
+	}
+
+	// Check if response is HTML (Render cold start or error page)
+	if len(body) > 0 && body[0] == '<' {
+		log.Printf("[ERROR] Scoring service returned HTML instead of JSON (service may be cold starting): %s", string(body[:min(len(body), 200)]))
+		return nil, fmt.Errorf("scoring service is starting up, please try again in a few seconds")
+	}
+
 	var scoreResp ScoringResponse
 	if err := json.Unmarshal(body, &scoreResp); err != nil {
-		return nil, err
+		log.Printf("[ERROR] Failed to parse ats-scorer response: %v, body: %s", err, string(body[:min(len(body), 500)]))
+		return nil, fmt.Errorf("invalid response from scoring service: %v", err)
 	}
 
 	if scoreResp.Error != "" {

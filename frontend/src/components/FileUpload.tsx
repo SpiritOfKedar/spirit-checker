@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface FileUploadProps {
     onFileSelect: (file: File | null) => void;
@@ -65,6 +66,22 @@ export default function FileUpload({
         return (bytes / (1024 * 1024)).toFixed(1) + " MB";
     };
 
+    const getFileIcon = () => (
+        <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+        </svg>
+    );
+
     return (
         <div
             onDragEnter={handleDrag}
@@ -72,14 +89,14 @@ export default function FileUpload({
             onDragOver={handleDrag}
             onDrop={handleDrop}
             className={`
-                relative border-2 border-dashed rounded-xl p-8 text-center
-                transition-all duration-300 cursor-pointer group
-                ${isDragging
-                    ? "border-[var(--primary)] bg-[var(--primary)]/10 scale-[1.02]"
-                    : "border-[var(--card-border)] hover:border-[var(--primary)]/50 hover:bg-[var(--background-secondary)]"
+        relative border border-dashed rounded-lg p-6 text-center
+        transition-colors duration-200
+        ${isDragging
+                    ? "border-foreground bg-muted"
+                    : "border-border hover:border-muted-foreground hover:bg-muted/50"
                 }
-                ${selectedFile ? "bg-[var(--primary)]/5 border-[var(--primary)]/30" : ""}
-            `}
+        ${selectedFile ? "bg-muted/30 border-muted-foreground" : ""}
+      `}
         >
             <input
                 type="file"
@@ -90,43 +107,31 @@ export default function FileUpload({
 
             {selectedFile ? (
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-[var(--primary)]/20 rounded-xl flex items-center justify-center
-                                      group-hover:bg-[var(--primary)]/30 transition-colors">
-                            <svg
-                                className="w-7 h-7 text-[var(--primary)]"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                />
-                            </svg>
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-muted rounded-md flex items-center justify-center text-muted-foreground">
+                            {getFileIcon()}
                         </div>
                         <div className="text-left">
-                            <p className="font-semibold text-[var(--foreground)] truncate max-w-[250px]">
+                            <p className="text-sm font-medium text-foreground truncate max-w-[200px]">
                                 {selectedFile.name}
                             </p>
-                            <p className="text-sm text-[var(--foreground-muted)]">
+                            <p className="text-xs text-muted-foreground">
                                 {formatFileSize(selectedFile.size)}
                             </p>
                         </div>
                     </div>
-                    <button
+                    <Button
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={(e) => {
                             e.stopPropagation();
                             removeFile();
                         }}
-                        className="p-3 hover:bg-[var(--error)]/20 rounded-xl transition-all duration-200
-                                 text-[var(--foreground-muted)] hover:text-[var(--error)]"
+                        className="text-muted-foreground hover:text-destructive"
                     >
                         <svg
-                            className="w-5 h-5"
+                            className="w-4 h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -138,16 +143,13 @@ export default function FileUpload({
                                 d="M6 18L18 6M6 6l12 12"
                             />
                         </svg>
-                    </button>
+                    </Button>
                 </div>
             ) : (
-                <div className="space-y-4">
-                    <div className="w-16 h-16 mx-auto bg-[var(--card-border)]/50 rounded-2xl 
-                                  flex items-center justify-center group-hover:bg-[var(--primary)]/20
-                                  transition-all duration-300">
+                <div className="space-y-2">
+                    <div className="w-10 h-10 mx-auto bg-muted rounded-md flex items-center justify-center text-muted-foreground">
                         <svg
-                            className="w-8 h-8 text-[var(--foreground-muted)] group-hover:text-[var(--primary)]
-                                     transition-colors duration-300"
+                            className="w-5 h-5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -161,12 +163,12 @@ export default function FileUpload({
                         </svg>
                     </div>
                     <div>
-                        <p className="font-medium text-[var(--foreground)]">
+                        <p className="text-sm text-foreground">
                             Drop your resume here, or{" "}
-                            <span className="text-[var(--primary)] font-semibold">browse</span>
+                            <span className="font-medium underline underline-offset-2">browse</span>
                         </p>
-                        <p className="text-sm text-[var(--foreground-muted)] mt-2">
-                            Supports PDF and DOCX files up to 10MB
+                        <p className="text-xs text-muted-foreground mt-1">
+                            PDF or DOCX, up to 10MB
                         </p>
                     </div>
                 </div>

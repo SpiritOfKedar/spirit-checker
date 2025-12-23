@@ -1,5 +1,8 @@
 "use client";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+
 interface SectionFeedback {
     score: number;
     feedback: string;
@@ -11,44 +14,39 @@ interface SectionCardProps {
 }
 
 export default function SectionCard({ title, section }: SectionCardProps) {
-    const getScoreColor = (score: number): string => {
-        if (score >= 80) return "#10b981";
-        if (score >= 60) return "#f59e0b";
-        if (score >= 40) return "#f97316";
-        return "#ef4444";
+    const getScoreLabel = (score: number): string => {
+        if (score >= 80) return "Strong";
+        if (score >= 60) return "Good";
+        if (score >= 40) return "Fair";
+        return "Needs work";
     };
 
-    const color = getScoreColor(section.score);
-
     return (
-        <div className="glass-card p-5 hover:border-[var(--primary)]/30 transition-all duration-300 group">
-            <div className="flex items-center justify-between mb-4">
-                <h4 className="font-semibold text-[var(--foreground)] capitalize text-lg">{title}</h4>
-                <div
-                    className="px-3 py-1.5 rounded-lg text-sm font-bold"
-                    style={{
-                        backgroundColor: `${color}15`,
-                        color,
-                        border: `1px solid ${color}25`
-                    }}
-                >
-                    {section.score}
+        <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium capitalize">
+                        {title}
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">
+                            {getScoreLabel(section.score)}
+                        </span>
+                        <span className="text-sm font-semibold tabular-nums">
+                            {section.score}
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </CardHeader>
+            <CardContent className="pt-0 space-y-3">
+                {/* Progress bar */}
+                <Progress value={section.score} className="h-1.5" />
 
-            {/* Progress bar */}
-            <div className="h-2 bg-[var(--card-border)]/50 rounded-full mb-4 overflow-hidden">
-                <div
-                    className="h-full rounded-full transition-all duration-700 ease-out"
-                    style={{
-                        width: `${section.score}%`,
-                        backgroundColor: color,
-                        boxShadow: `0 0 10px ${color}50`
-                    }}
-                />
-            </div>
-
-            <p className="text-sm text-[var(--foreground-muted)] leading-relaxed">{section.feedback}</p>
-        </div>
+                {/* Feedback text */}
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                    {section.feedback}
+                </p>
+            </CardContent>
+        </Card>
     );
 }

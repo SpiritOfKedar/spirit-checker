@@ -1,28 +1,35 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, Playfair_Display } from "next/font/google";
-import Script from "next/script";
+import { Inter, Source_Serif_4 } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
+  display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-space",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-serif",
+  display: "swap",
   style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: "Spirit Checker | ATS Resume Analyzer",
-  description: "Analyze your resume against job descriptions. Get instant ATS compatibility scores, skill gap analysis, and actionable optimization tips.",
-  keywords: ["ATS", "resume", "job search", "resume checker", "ATS score", "resume optimization"],
+  description:
+    "Analyze your resume against job descriptions. Get ATS compatibility scores, skill gap analysis, and actionable optimization recommendations.",
+  keywords: [
+    "ATS",
+    "resume",
+    "job search",
+    "resume checker",
+    "ATS score",
+    "resume optimization",
+    "applicant tracking system",
+  ],
 };
 
 export default function RootLayout({
@@ -31,39 +38,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        {/* Twemoji for iOS-style emojis */}
-        <Script
-          src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js"
-          strategy="afterInteractive"
-        />
-        <Script id="twemoji-init" strategy="afterInteractive">
-          {`
-            if (typeof twemoji !== 'undefined') {
-              twemoji.parse(document.body, {
-                folder: 'svg',
-                ext: '.svg',
-                base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
-              });
-              
-              // Re-parse on DOM changes
-              const observer = new MutationObserver(() => {
-                twemoji.parse(document.body, {
-                  folder: 'svg',
-                  ext: '.svg',
-                  base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
-                });
-              });
-              observer.observe(document.body, { childList: true, subtree: true });
-            }
-          `}
-        </Script>
-      </head>
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${playfair.variable} antialiased`}>
-        <main className="min-h-screen">
-          {children}
-        </main>
+    <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`} suppressHydrationWarning>
+      <body className="font-sans antialiased min-h-screen">
+        <ThemeProvider>
+          <div className="min-h-screen flex flex-col">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

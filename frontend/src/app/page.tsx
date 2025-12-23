@@ -2,88 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import FileUpload from "@/components/FileUpload";
-
-// Floating particles component
-function FloatingParticles() {
-  return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      {[...Array(20)].map((_, i) => (
-        <div
-          key={i}
-          className="absolute w-1 h-1 bg-[var(--primary)] rounded-full opacity-20"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `float ${5 + Math.random() * 10}s ease-in-out infinite`,
-            animationDelay: `${Math.random() * 5}s`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-// Animated counter
-function AnimatedCounter({ value, duration = 2000 }: { value: number; duration?: number }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let startTime: number;
-    let animationFrame: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      setCount(Math.floor(progress * value));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [value, duration]);
-
-  return <span>{count}</span>;
-}
-
-// Typing effect
-function TypeWriter({ words, className }: { words: string[]; className?: string }) {
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [currentText, setCurrentText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const word = words[currentWordIndex];
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (currentText.length < word.length) {
-          setCurrentText(word.slice(0, currentText.length + 1));
-        } else {
-          setTimeout(() => setIsDeleting(true), 1500);
-        }
-      } else {
-        if (currentText.length > 0) {
-          setCurrentText(currentText.slice(0, -1));
-        } else {
-          setIsDeleting(false);
-          setCurrentWordIndex((prev) => (prev + 1) % words.length);
-        }
-      }
-    }, isDeleting ? 50 : 100);
-
-    return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentWordIndex, words]);
-
-  return (
-    <span className={className}>
-      {currentText}
-      <span className="animate-pulse">|</span>
-    </span>
-  );
-}
+import FloatingParticles from "@/components/FloatingParticles";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Home() {
   const router = useRouter();
@@ -91,11 +18,21 @@ export default function Home() {
   const [jobDescription, setJobDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Detect typing activity
+  useEffect(() => {
+    if (jobDescription.length > 0) {
+      setIsTyping(true);
+      const timeout = setTimeout(() => setIsTyping(false), 800);
+      return () => clearTimeout(timeout);
+    }
+  }, [jobDescription]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,224 +97,204 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <FloatingParticles />
-
-      {/* Animated gradient orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[var(--primary)] rounded-full 
-                      mix-blend-multiply filter blur-[128px] opacity-20 animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[var(--accent)] rounded-full 
-                      mix-blend-multiply filter blur-[128px] opacity-15 animate-blob animation-delay-2000" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 
-                      bg-cyan-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-10 
-                      animate-blob animation-delay-4000" />
-      </div>
-
-      {/* Hero Section */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-16 relative z-10">
-
-        {/* Badge with entrance animation */}
-        <div
-          className={`mb-8 transform transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-            }`}
-        >
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium
-                         bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20
-                         hover:bg-[var(--primary)]/20 hover:scale-105 transition-all duration-300 cursor-default">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--primary)] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--primary)]"></span>
-            </span>
-            NLP-Powered Resume Analysis
-          </span>
-        </div>
-
-        {/* Title with staggered animation */}
-        <div
-          className={`text-center mb-6 transform transition-all duration-700 delay-100 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-        >
-          <h1 className="text-5xl md:text-7xl mb-4 tracking-tight">
-            <span className="font-[var(--font-brand)] italic gradient-text animate-gradient bg-[length:200%_200%]">Spirit</span>{" "}
-            <span className="font-bold text-[var(--foreground)]">Checker</span>
-          </h1>
-        </div>
-
-        {/* Subtitle with typing effect */}
-        <div
-          className={`text-center mb-4 transform transition-all duration-700 delay-200 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-        >
-          <p className="text-lg md:text-xl text-[var(--foreground-muted)] max-w-2xl">
-            Analyze your resume for{" "}
-            <TypeWriter
-              words={["ATS compatibility", "skill matching", "section optimization", "keyword analysis"]}
-              className="text-[var(--primary)] font-semibold"
-            />
-          </p>
-        </div>
-
-        <p
-          className={`text-base text-[var(--foreground-muted)]/70 text-center max-w-xl mb-12 
-                     transform transition-all duration-700 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-        >
-          Upload your resume and paste a job description to get instant feedback.
-        </p>
-
-        {/* Stats row */}
-        <div
-          className={`flex items-center gap-8 mb-12 transform transition-all duration-700 delay-400 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-        >
-          {[
-            { value: 80, label: "Skills tracked", suffix: "+", emoji: "🎯" },
-            { value: 4, label: "Analysis engines", suffix: "", emoji: "⚡️" },
-            { value: 100, label: "Score precision", suffix: "%", emoji: "✨" },
-          ].map((stat, i) => (
-            <div key={i} className="text-center group cursor-default">
-              <div className="text-lg mb-1">{stat.emoji}</div>
-              <div className="text-2xl md:text-3xl font-bold text-[var(--foreground)] 
-                            group-hover:text-[var(--primary)] transition-colors">
-                {mounted && <AnimatedCounter value={stat.value} duration={1500 + i * 500} />}
-                {stat.suffix}
-              </div>
-              <div className="text-xs text-[var(--foreground-muted)] uppercase tracking-wider mt-1">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Main Card */}
-        <div
-          className={`w-full max-w-3xl glass-card p-8 transform transition-all duration-700 delay-500 ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'
-            }`}
-        >
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* File Upload */}
-            <div className="group">
-              <label className="block text-sm font-medium text-[var(--foreground-muted)] mb-3 uppercase tracking-wider
-                              group-focus-within:text-[var(--primary)] transition-colors">
-                📄 Resume
-              </label>
-              <FileUpload
-                onFileSelect={setResumeFile}
-                selectedFile={resumeFile}
-              />
-            </div>
-
-            {/* Job Description */}
-            <div className="group">
-              <label className="block text-sm font-medium text-[var(--foreground-muted)] mb-3 uppercase tracking-wider
-                              group-focus-within:text-[var(--primary)] transition-colors">
-                💼 Job Description
-              </label>
-              <textarea
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Paste the job description here..."
-                className="w-full h-48 px-5 py-4 bg-[var(--background)] border border-[var(--card-border)] 
-                         rounded-xl text-[var(--foreground)] placeholder-[var(--foreground-muted)]/50 resize-none
-                         focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 
-                         transition-all duration-300
-                         hover:border-[var(--primary)]/50 hover:bg-[var(--background-secondary)]"
-              />
-            </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="flex items-center gap-3 p-4 bg-[var(--error)]/10 border border-[var(--error)]/30 
-                            rounded-xl text-[var(--error)] animate-shake">
-                <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <span className="font-medium">{error}</span>
-              </div>
-            )}
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="relative w-full py-4 px-6 bg-[var(--primary)] hover:bg-[var(--primary-hover)]
-                       rounded-xl font-semibold text-lg text-[var(--background)]
-                       transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed
-                       flex items-center justify-center gap-3 overflow-hidden
-                       hover:scale-[1.02] hover:shadow-[0_0_30px_var(--primary-glow)] 
-                       active:scale-[0.98] group"
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full 
-                            transition-transform duration-1000 bg-gradient-to-r from-transparent 
-                            via-white/20 to-transparent" />
-
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-[var(--background)]/30 border-t-[var(--background)] rounded-full animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                <>
-                  <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                  Analyze Resume
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-
-        {/* Features with staggered entrance */}
-        <div className="w-full max-w-3xl mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              emoji: "📊",
-              title: "ATS Score",
-              desc: "Weighted 0-100 score based on skill match and text similarity",
-            },
-            {
-              emoji: "🎯",
-              title: "Skill Matching",
-              desc: "See which required skills you have and which ones are missing",
-            },
-            {
-              emoji: "📝",
-              title: "Section Feedback",
-              desc: "Get tips to improve each section of your resume",
-            },
-          ].map((feature, i) => (
-            <div
-              key={i}
-              className={`group flex flex-col items-center text-center p-6 glass-card
-                         hover:border-[var(--primary)]/30 transition-all duration-500
-                         hover:-translate-y-2 hover:shadow-lg hover:shadow-[var(--primary)]/10
-                         transform ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-              style={{ transitionDelay: `${600 + i * 100}ms` }}
-            >
-              <div className="text-4xl mb-4 group-hover:scale-125 transition-transform duration-300">
-                {feature.emoji}
-              </div>
-              <h3 className="font-semibold text-[var(--foreground)] mb-2 group-hover:text-[var(--primary)] transition-colors">
-                {feature.title}
-              </h3>
-              <p className="text-sm text-[var(--foreground-muted)]">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div
-          className={`mt-16 text-sm text-[var(--foreground-muted)]/60 transform transition-all duration-700 ${mounted ? 'opacity-100' : 'opacity-0'
-            }`}
-          style={{ transitionDelay: '900ms' }}
-        >
-          Built by Spirit
+    <TooltipProvider>
+      {/* Theme Toggle - Fixed Bottom Right */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="bg-card border border-border rounded-full shadow-lg p-1">
+          <ThemeToggle />
         </div>
       </div>
-    </div>
+
+      {/* Background layers */}
+      <div className="fixed inset-0 bg-gradient-subtle pointer-events-none" />
+      <FloatingParticles isActive={isTyping} particleCount={50} />
+      <div className="fixed inset-0 bg-grid pointer-events-none opacity-40" />
+
+      <main className="relative flex-1 pt-20 pb-12 md:pt-24 md:pb-20">
+        <div className="container-wide">
+          {/* Header */}
+          <header className={`text-center mb-12 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
+            <div className="inline-flex items-center gap-2 mb-6">
+              <Badge variant="secondary" className="text-xs font-medium px-3 py-1 animate-fade-in">
+                <span className="relative flex h-1.5 w-1.5 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/50"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-foreground"></span>
+                </span>
+                NLP-Powered Analysis
+              </Badge>
+            </div>
+
+            <h1 className={`text-4xl md:text-5xl font-semibold tracking-tight mb-4 ${mounted ? 'animate-fade-in-up delay-100' : 'opacity-0'}`}>
+              <span className="font-serif italic">Spirit</span> Checker
+            </h1>
+
+            <p className={`text-muted-foreground text-lg max-w-xl mx-auto leading-relaxed ${mounted ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
+              Analyze your resume against job descriptions. Get actionable insights
+              to improve your ATS compatibility score.
+            </p>
+          </header>
+
+          {/* Main Form Card */}
+          <Card className={`max-w-2xl mx-auto shadow-sm hover-lift transition-all duration-300 ${mounted ? 'animate-scale-in delay-300' : 'opacity-0'}`}>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl">Resume Analysis</CardTitle>
+              <CardDescription>
+                Upload your resume and paste the job description to begin analysis.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Resume Upload */}
+                <div className="space-y-2 focus-glow rounded-lg transition-all">
+                  <label className="text-sm font-medium text-foreground">
+                    Resume
+                  </label>
+                  <FileUpload
+                    onFileSelect={setResumeFile}
+                    selectedFile={resumeFile}
+                  />
+                </div>
+
+                <Separator />
+
+                {/* Job Description */}
+                <div className="space-y-2 focus-glow rounded-lg transition-all">
+                  <label className="text-sm font-medium text-foreground">
+                    Job Description
+                  </label>
+                  <Textarea
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                    placeholder="Paste the job description here..."
+                    className="min-h-[180px] resize-none text-sm transition-all duration-200"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Include the full job posting for best results.
+                  </p>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive animate-fade-in">
+                    <svg
+                      className="w-4 h-4 flex-shrink-0"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  size="lg"
+                >
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="w-4 h-4 mr-2 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Analyzing...
+                    </>
+                  ) : (
+                    "Analyze Resume"
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Features */}
+          <section className={`mt-16 max-w-2xl mx-auto ${mounted ? 'animate-fade-in-up delay-400' : 'opacity-0'}`}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                {
+                  icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  ),
+                  title: "ATS Score",
+                  description: "Weighted compatibility score based on skill match",
+                },
+                {
+                  icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  ),
+                  title: "Skill Matching",
+                  description: "Identify matched and missing skills",
+                },
+                {
+                  icon: (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  ),
+                  title: "Section Feedback",
+                  description: "Improve each resume section",
+                },
+              ].map((feature, i) => (
+                <Tooltip key={i}>
+                  <TooltipTrigger asChild>
+                    <div
+                      className="p-4 rounded-lg border border-border bg-card/80 backdrop-blur-sm hover-lift cursor-default group"
+                      style={{ animationDelay: `${400 + i * 100}ms` }}
+                    >
+                      <div className="w-8 h-8 rounded-md bg-muted flex items-center justify-center mb-3 text-muted-foreground group-hover:text-foreground transition-colors">
+                        {feature.icon}
+                      </div>
+                      <h3 className="font-medium text-sm mb-1">{feature.title}</h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">{feature.title}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className={`mt-16 text-center ${mounted ? 'animate-fade-in delay-500' : 'opacity-0'}`}>
+            <p className="text-xs text-muted-foreground">
+              Built by Spirit
+            </p>
+          </footer>
+        </div>
+      </main>
+    </TooltipProvider>
   );
 }
