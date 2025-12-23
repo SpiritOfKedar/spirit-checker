@@ -1,4 +1,4 @@
-.PHONY: build up down logs dev test clean
+.PHONY: build up down logs dev test clean git-sync
 
 # Build all services
 build:
@@ -56,3 +56,8 @@ clean:
 	docker-compose down -v --rmi local
 	find . -name "*.exe" -delete
 	find . -name "*.test" -delete
+
+# Git sync
+git-sync:
+	git pull --rebase
+	git push
