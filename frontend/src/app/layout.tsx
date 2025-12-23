@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Source_Serif_4 } from "next/font/google";
+import { JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
-const inter = Inter({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-mono",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const sourceSerif = Source_Serif_4({
@@ -38,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`} suppressHydrationWarning>
-      <body className="font-sans antialiased min-h-screen">
+    <html lang="en" className={`${jetbrainsMono.variable} ${sourceSerif.variable}`} suppressHydrationWarning>
+      <body className="font-mono antialiased min-h-screen">
         <ThemeProvider>
           <div className="min-h-screen flex flex-col">
             {children}
@@ -49,3 +50,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -127,7 +127,7 @@ export default function Home() {
               </Badge>
             </div>
 
-            <h1 className={`text-4xl md:text-5xl font-semibold tracking-tight mb-4 ${mounted ? 'animate-fade-in-up delay-100' : 'opacity-0'}`}>
+            <h1 className={`text-4xl md:text-5xl font-semibold tracking-tighter mb-3 ${mounted ? 'animate-fade-in-up delay-100' : 'opacity-0'}`}>
               <span className="font-serif italic">Spirit</span> Checker
             </h1>
 
