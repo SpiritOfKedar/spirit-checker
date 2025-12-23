@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - CORS_ORIGINS=http://localhost:3000
+      - RESUME_PARSER_SERVICE_URL=http://resume-parser:8081
+      - NLP_SERVICE_URL=http://nlp-service:8082
+      - ATS_SCORER_SERVICE_URL=http://ats-scorer:8083
+    depends_on:
+      - resume-parser
+      - nlp-service
+      - ats-scorer
+    networks:
+      - ats-network
+    restart: unless-stopped
+
+  resume-parser:
+    build:
+      context: ./services/resume-parser
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - PORT=8081
+    networks:
+      - ats-network
+    restart: unless-stopped
+
+  nlp-service:
+    build:
+      context: ./services/nlp-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - PORT=8082
+    networks:
+      - ats-network
+    restart: unless-stopped
+
+  ats-scorer:
+    build:
+      context: ./services/ats-scorer
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - PORT=8083
+      - SKILL_WEIGHT=0.40
+      - SIMILARITY_WEIGHT=0.30
+      - SECTION_WEIGHT=0.30
+    networks:
+      - ats-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - ats-network
+    restart: unless-stopped
+  # Optional: Redis cache for repeated analyses
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - ats-network
+  #   restart: unless-stopped
+
+networks:
+  ats-network:
+    driver: bridge
