@@ -1,4 +1,4 @@
-# ATS Resume Checker
+# spirit-checker: ATS Resume Checker
 
 A microservices-based Applicant Tracking System (ATS) resume analyzer built with Go and Next.js. This tool parses resumes, extracts skills and keywords using NLP techniques, and calculates a compatibility score against job descriptions.
 
