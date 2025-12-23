@@ -142,13 +142,15 @@ export default function FloatingParticles({
             );
 
             if (isDark) {
-                gradient.addColorStop(0, 'rgba(200, 200, 200, 0.4)');
-                gradient.addColorStop(0.5, 'rgba(180, 180, 180, 0.15)');
-                gradient.addColorStop(1, 'rgba(160, 160, 160, 0)');
+                // Dark mode: Subtle white/gray glow
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.1)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
             } else {
-                gradient.addColorStop(0, 'rgba(120, 120, 120, 0.4)');
-                gradient.addColorStop(0.5, 'rgba(140, 140, 140, 0.15)');
-                gradient.addColorStop(1, 'rgba(150, 150, 150, 0)');
+                // Light mode: Subtle black/gray glow
+                gradient.addColorStop(0, 'rgba(0, 0, 0, 0.2)');
+                gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.05)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
             }
 
             ctx.beginPath();
@@ -176,13 +178,13 @@ export default function FloatingParticles({
 
                     // Create simple line with theme-aware color
                     ctx.strokeStyle = isDark
-                        ? `rgba(220, 220, 220, ${opacity})`
-                        : `rgba(80, 80, 80, ${opacity})`;
+                        ? `rgba(255, 255, 255, ${opacity * 0.8})`
+                        : `rgba(0, 0, 0, ${opacity * 0.6})`;
 
                     ctx.beginPath();
                     ctx.moveTo(particle.x, particle.y);
                     ctx.lineTo(other.x, other.y);
-                    ctx.lineWidth = isDark ? 0.8 : 0.7;
+                    ctx.lineWidth = isDark ? 0.6 : 0.5;
                     ctx.stroke();
                 }
             }
