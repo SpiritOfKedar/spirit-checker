@@ -285,3 +285,7 @@ Environment variables for customizing service behavior:
 ## License
 
 MIT License
+
+---
+
+Built by Spirit
