@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -7,9 +7,20 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
-  title: "ATS Resume Checker | Optimize Your Resume",
-  description: "AI-powered ATS Resume Checker. Analyze your resume against job descriptions and get instant feedback on ATS compatibility, skills matching, and optimization tips.",
+  title: "Spirit Checker | ATS Resume Analyzer",
+  description: "Analyze your resume against job descriptions. Get instant ATS compatibility scores, skill gap analysis, and actionable optimization tips.",
   keywords: ["ATS", "resume", "job search", "resume checker", "ATS score", "resume optimization"],
 };
 
@@ -20,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${playfair.variable} antialiased`}>
         <main className="min-h-screen">
           {children}
         </main>

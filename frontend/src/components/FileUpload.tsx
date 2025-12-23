@@ -72,14 +72,14 @@ export default function FileUpload({
             onDragOver={handleDrag}
             onDrop={handleDrop}
             className={`
-        relative border-2 border-dashed rounded-xl p-8 text-center
-        transition-all duration-200 cursor-pointer
-        ${isDragging
-                    ? "border-[var(--primary)] bg-[var(--primary)]/10"
-                    : "border-[var(--card-border)] hover:border-[var(--primary)]/50"
+                relative border-2 border-dashed rounded-xl p-8 text-center
+                transition-all duration-300 cursor-pointer group
+                ${isDragging
+                    ? "border-[var(--primary)] bg-[var(--primary)]/10 scale-[1.02]"
+                    : "border-[var(--card-border)] hover:border-[var(--primary)]/50 hover:bg-[var(--background-secondary)]"
                 }
-        ${selectedFile ? "bg-[var(--primary)]/5" : ""}
-      `}
+                ${selectedFile ? "bg-[var(--primary)]/5 border-[var(--primary)]/30" : ""}
+            `}
         >
             <input
                 type="file"
@@ -91,9 +91,10 @@ export default function FileUpload({
             {selectedFile ? (
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-[var(--primary)]/20 rounded-xl flex items-center justify-center">
+                        <div className="w-14 h-14 bg-[var(--primary)]/20 rounded-xl flex items-center justify-center
+                                      group-hover:bg-[var(--primary)]/30 transition-colors">
                             <svg
-                                className="w-6 h-6 text-[var(--primary)]"
+                                className="w-7 h-7 text-[var(--primary)]"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -101,16 +102,16 @@ export default function FileUpload({
                                 <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    strokeWidth={2}
+                                    strokeWidth={1.5}
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                 />
                             </svg>
                         </div>
                         <div className="text-left">
-                            <p className="font-medium text-gray-200 truncate max-w-[200px]">
+                            <p className="font-semibold text-[var(--foreground)] truncate max-w-[250px]">
                                 {selectedFile.name}
                             </p>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-[var(--foreground-muted)]">
                                 {formatFileSize(selectedFile.size)}
                             </p>
                         </div>
@@ -121,10 +122,11 @@ export default function FileUpload({
                             e.stopPropagation();
                             removeFile();
                         }}
-                        className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                        className="p-3 hover:bg-[var(--error)]/20 rounded-xl transition-all duration-200
+                                 text-[var(--foreground-muted)] hover:text-[var(--error)]"
                     >
                         <svg
-                            className="w-5 h-5 text-red-400"
+                            className="w-5 h-5"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -140,9 +142,12 @@ export default function FileUpload({
                 </div>
             ) : (
                 <div className="space-y-4">
-                    <div className="w-16 h-16 mx-auto bg-[var(--card-border)] rounded-2xl flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto bg-[var(--card-border)]/50 rounded-2xl 
+                                  flex items-center justify-center group-hover:bg-[var(--primary)]/20
+                                  transition-all duration-300">
                         <svg
-                            className="w-8 h-8 text-gray-400"
+                            className="w-8 h-8 text-[var(--foreground-muted)] group-hover:text-[var(--primary)]
+                                     transition-colors duration-300"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -150,18 +155,18 @@ export default function FileUpload({
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
-                                strokeWidth={2}
+                                strokeWidth={1.5}
                                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                             />
                         </svg>
                     </div>
                     <div>
-                        <p className="font-medium text-gray-300">
+                        <p className="font-medium text-[var(--foreground)]">
                             Drop your resume here, or{" "}
-                            <span className="text-[var(--primary)]">browse</span>
+                            <span className="text-[var(--primary)] font-semibold">browse</span>
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Supports PDF and DOCX (max 10MB)
+                        <p className="text-sm text-[var(--foreground-muted)] mt-2">
+                            Supports PDF and DOCX files up to 10MB
                         </p>
                     </div>
                 </div>
