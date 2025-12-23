@@ -17,33 +17,39 @@ interface Particle {
 interface FloatingParticlesProps {
     isActive?: boolean;
     particleCount?: number;
+    keystrokeCount?: number;
 }
 
 export default function FloatingParticles({
     isActive = false,
-    particleCount = 60
+    particleCount = 60,
+    keystrokeCount = 0
 }: FloatingParticlesProps) {
     const { resolvedTheme } = useTheme();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const particlesRef = useRef<Particle[]>([]);
-    const animationRef = useRef<number>();
+    const animationRef = useRef<number | undefined>(undefined);
     const mouseRef = useRef({ x: -1000, y: -1000 });
     const isActiveRef = useRef(isActive);
-    const prevActiveRef = useRef(isActive);
+    const prevKeystrokeCountRef = useRef(keystrokeCount);
     const themeRef = useRef(resolvedTheme);
 
-    // Update isActive ref and trigger movement on typing
+    // Update isActive ref
     useEffect(() => {
-        if (isActive && !prevActiveRef.current) {
-            // Push particles in random directions when typing starts
-            particlesRef.current.forEach(particle => {
-                particle.vx += (Math.random() - 0.5) * 5;
-                particle.vy += (Math.random() - 0.5) * 5;
-            });
-        }
-        prevActiveRef.current = isActive;
         isActiveRef.current = isActive;
     }, [isActive]);
+
+    // Trigger particle movement on each keystroke
+    useEffect(() => {
+        if (keystrokeCount > prevKeystrokeCountRef.current) {
+            // Push particles in random directions on each keystroke
+            particlesRef.current.forEach(particle => {
+                particle.vx += (Math.random() - 0.5) * 3;
+                particle.vy += (Math.random() - 0.5) * 3;
+            });
+        }
+        prevKeystrokeCountRef.current = keystrokeCount;
+    }, [keystrokeCount]);
 
     // Update theme ref
     useEffect(() => {

@@ -19,16 +19,18 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [keystrokeCount, setKeystrokeCount] = useState(0);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Detect typing activity
+  // Detect typing activity and increment keystroke count
   useEffect(() => {
     if (jobDescription.length > 0) {
       setIsTyping(true);
+      setKeystrokeCount(prev => prev + 1);
       const timeout = setTimeout(() => setIsTyping(false), 800);
       return () => clearTimeout(timeout);
     }
@@ -107,7 +109,7 @@ export default function Home() {
 
       {/* Background layers */}
       <div className="fixed inset-0 bg-gradient-subtle pointer-events-none" />
-      <FloatingParticles isActive={isTyping} particleCount={50} />
+      <FloatingParticles isActive={isTyping} particleCount={50} keystrokeCount={keystrokeCount} />
       <div className="fixed inset-0 bg-grid pointer-events-none opacity-40" />
 
       <main className="relative flex-1 pt-20 pb-12 md:pt-24 md:pb-20">
