@@ -95,6 +95,15 @@ h6 {
   letter-spacing: -0.02em;
 }
 
+/* Twemoji - iOS style emojis */
+img.emoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 0.1em;
+  vertical-align: -0.1em;
+  display: inline-block;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

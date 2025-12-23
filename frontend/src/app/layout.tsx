@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -31,6 +32,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Twemoji for iOS-style emojis */}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js"
+          strategy="afterInteractive"
+        />
+        <Script id="twemoji-init" strategy="afterInteractive">
+          {`
+            if (typeof twemoji !== 'undefined') {
+              twemoji.parse(document.body, {
+                folder: 'svg',
+                ext: '.svg',
+                base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+              });
+              
+              // Re-parse on DOM changes
+              const observer = new MutationObserver(() => {
+                twemoji.parse(document.body, {
+                  folder: 'svg',
+                  ext: '.svg',
+                  base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+                });
+              });
+              observer.observe(document.body, { childList: true, subtree: true });
+            }
+          `}
+        </Script>
+      </head>
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${playfair.variable} antialiased`}>
         <main className="min-h-screen">
           {children}
