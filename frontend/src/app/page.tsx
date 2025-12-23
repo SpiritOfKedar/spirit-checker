@@ -113,11 +113,11 @@ export default function Home() {
       <FloatingParticles isActive={isTyping} particleCount={50} keystrokeCount={keystrokeCount} />
       <div className="fixed inset-0 bg-grid pointer-events-none opacity-40" />
 
-      <main className="relative flex-1 pt-20 pb-12 md:pt-24 md:pb-20">
+      <main className="relative flex-1 pt-16 pb-10 md:pt-20 md:pb-16">
         <div className="container-wide">
           {/* Header */}
-          <header className={`text-center mb-12 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
-            <div className="inline-flex items-center gap-2 mb-6">
+          <header className={`text-center mb-8 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
+            <div className="inline-flex items-center gap-2 mb-4">
               <Badge variant="secondary" className="text-xs font-medium px-3 py-1 animate-fade-in">
                 <span className="relative flex h-1.5 w-1.5 mr-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground/50"></span>
@@ -147,9 +147,9 @@ export default function Home() {
             </CardHeader>
 
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Resume Upload */}
-                <div className="space-y-2 focus-glow rounded-lg transition-all">
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
                     Resume
                   </label>
@@ -162,7 +162,7 @@ export default function Home() {
                 <Separator />
 
                 {/* Job Description */}
-                <div className="space-y-2 focus-glow rounded-lg transition-all">
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
                     Job Description
                   </label>
@@ -206,7 +206,7 @@ export default function Home() {
           </Card>
 
           {/* Features */}
-          <section className={`mt-16 max-w-2xl mx-auto ${mounted ? 'animate-fade-in-up delay-400' : 'opacity-0'}`}>
+          <section className={`mt-10 max-w-2xl mx-auto ${mounted ? 'animate-fade-in-up delay-400' : 'opacity-0'}`}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
                 {
@@ -249,7 +249,7 @@ export default function Home() {
           </section>
 
           {/* Footer */}
-          <footer className={`mt-16 text-center ${mounted ? 'animate-fade-in delay-500' : 'opacity-0'}`}>
+          <footer className={`mt-10 text-center ${mounted ? 'animate-fade-in delay-500' : 'opacity-0'}`}>
             <p className="text-xs text-muted-foreground">
               Built by Spirit
             </p>
